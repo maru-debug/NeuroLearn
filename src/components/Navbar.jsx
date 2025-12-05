@@ -16,7 +16,7 @@ function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/auth");
+    navigate("/login");
   };
 
   return (
@@ -58,10 +58,10 @@ function Navbar() {
             </div>
           ) : (
             <button
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/login")}
               className="ml-4 text-sm px-4 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700"
             >
-              Вход / Регистрация
+              Вход
             </button>
           )}
         </div>
@@ -117,11 +117,11 @@ function Navbar() {
               <button
                 onClick={() => {
                   setOpen(false);
-                  navigate("/auth");
+                  navigate("/login");
                 }}
                 className="mt-1 text-left px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-md"
               >
-                Вход / Регистрация
+                Вход
               </button>
             )}
           </div>
