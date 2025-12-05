@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const initialState = {
   name: "",
@@ -32,9 +33,21 @@ function validate(values) {
 }
 
 function UserProfileForm({ onSubmitProfile }) {
+  const { user } = useAuth();
   const [values, setValues] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+
+  // Если пользователь авторизован – подставляем его имя и email
+  useEffect(() => {
+    if (user) {
+      setValues((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,7 +62,9 @@ function UserProfileForm({ onSubmitProfile }) {
 
     if (Object.keys(validationErrors).length === 0) {
       setSubmitted(true);
-      if (onSubmitProfile) onSubmitProfile(values);
+      if (onSubmitProfile) {
+        onSubmitProfile(values);
+      }
     } else {
       setSubmitted(false);
     }
@@ -66,7 +81,7 @@ function UserProfileForm({ onSubmitProfile }) {
             Профиль обучающегося
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Заполните форму, чтобы система могла подбирать персональные
+            Заполните форму, чтобы система могла подбирать для вас персональные
             рекомендации.
           </p>
         </div>

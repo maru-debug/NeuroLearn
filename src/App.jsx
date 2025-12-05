@@ -3,6 +3,7 @@ import Layout from "./components/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import MaterialsPage from "./pages/MaterialsPage.jsx";
 import CatalogPage from "./pages/CatalogPage.jsx";
+import AuthPage from "./pages/AuthPage.jsx";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="materials" element={<MaterialsPage />} />
         <Route path="catalog" element={<CatalogPage />} />
+        <Route path="auth" element={<AuthPage />} />
       </Route>
     </Routes>
   );
