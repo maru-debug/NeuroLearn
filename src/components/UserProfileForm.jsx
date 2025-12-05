@@ -38,7 +38,7 @@ function UserProfileForm({ onSubmitProfile }) {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  // Если пользователь авторизован – подставляем его имя и email
+  // Предзаполняем имя и email из аккаунта
   useEffect(() => {
     if (user) {
       setValues((prev) => ({
@@ -62,9 +62,7 @@ function UserProfileForm({ onSubmitProfile }) {
 
     if (Object.keys(validationErrors).length === 0) {
       setSubmitted(true);
-      if (onSubmitProfile) {
-        onSubmitProfile(values);
-      }
+      if (onSubmitProfile) onSubmitProfile(values);
     } else {
       setSubmitted(false);
     }
@@ -87,7 +85,7 @@ function UserProfileForm({ onSubmitProfile }) {
         </div>
         {submitted && (
           <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">
-            Данные сохранены
+            Данные профиля сохранены
           </span>
         )}
       </div>

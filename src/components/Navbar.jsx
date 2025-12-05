@@ -37,10 +37,13 @@ function Navbar() {
             Главная
           </NavLink>
           <NavLink to="/materials" className={navLinkClass}>
-            Материалы и рекомендации
+            Материалы
           </NavLink>
           <NavLink to="/catalog" className={navLinkClass}>
-            Каталог рекомендаций
+            Каталог
+          </NavLink>
+          <NavLink to="/my-courses" className={navLinkClass}>
+            Мои курсы
           </NavLink>
 
           {user ? (
@@ -93,14 +96,21 @@ function Navbar() {
               className={navLinkClass}
               onClick={() => setOpen(false)}
             >
-              Материалы и рекомендации
+              Материалы
             </NavLink>
             <NavLink
               to="/catalog"
               className={navLinkClass}
               onClick={() => setOpen(false)}
             >
-              Каталог рекомендаций
+              Каталог
+            </NavLink>
+            <NavLink
+              to="/my-courses"
+              className={navLinkClass}
+              onClick={() => setOpen(false)}
+            >
+              Мои курсы
             </NavLink>
 
             {user ? (
