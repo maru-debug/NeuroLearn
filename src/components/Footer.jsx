@@ -1,16 +1,13 @@
 function Footer() {
   return (
-    <footer
-      style={{
-        borderTop: "1px solid #e5e7eb",
-        padding: "10px 16px",
-        fontSize: "12px",
-        color: "#6b7280",
-        backgroundColor: "#ffffff",
-      }}
-    >
-      © {new Date().getFullYear()} Интеллектуальная рекомендательная система
-      для обучения — учебный проект
+    <footer className="bg-white border-t border-slate-200 mt-8">
+      <div className="container py-4 text-xs sm:text-sm text-slate-500 flex flex-col sm:flex-row justify-between gap-2">
+        <span>
+          © {new Date().getFullYear()} Интеллектуальная рекомендательная система
+          для обучения
+        </span>
+        <span>Учебный проект (демо-версия системы рекомендаций)</span>
+      </div>
     </footer>
   );
 }
