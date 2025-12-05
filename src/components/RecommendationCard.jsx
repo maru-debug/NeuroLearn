@@ -1,6 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import { useLearning } from "../context/LearningContext.jsx";
 
-function RecommendationCard({ item, showMatch = false, showEnrollButton = true }) {
+function RecommendationCard({
+  item,
+  showMatch = false,
+  showEnrollButton = true,
+}) {
+  const navigate = useNavigate();
   const {
     isEnrolled,
     enrollCourse,
@@ -11,7 +17,8 @@ function RecommendationCard({ item, showMatch = false, showEnrollButton = true }
   const enrolled = isEnrolled(item.id);
   const matchScore = showMatch ? scoreCourseForProfile(item) : null;
 
-  const handleClick = () => {
+  const handleEnrollClick = (e) => {
+    e.stopPropagation();
     if (!showEnrollButton || item.type !== "course") return;
     if (enrolled) {
       unenrollCourse(item.id);
@@ -20,8 +27,17 @@ function RecommendationCard({ item, showMatch = false, showEnrollButton = true }
     }
   };
 
+  const handleCardClick = () => {
+    if (item.type === "course") {
+      navigate(`/course/${item.id}`);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex flex-col gap-2">
+    <div
+      className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex flex-col gap-2 cursor-pointer hover:shadow-md transition"
+      onClick={handleCardClick}
+    >
       <div className="flex items-start justify-between gap-2">
         <span className="text-xs uppercase tracking-wide font-semibold text-indigo-600">
           {item.type === "course" ? "Курс" : "Статья"}
@@ -63,12 +79,12 @@ function RecommendationCard({ item, showMatch = false, showEnrollButton = true }
               #{tag}
             </span>
           ))}
-        </div>
+      </div>
       )}
 
       {showEnrollButton && item.type === "course" && (
         <button
-          onClick={handleClick}
+          onClick={handleEnrollClick}
           className={`mt-3 inline-flex items-center justify-center px-3 py-1.5 rounded-xl text-xs font-medium border transition ${
             enrolled
               ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"

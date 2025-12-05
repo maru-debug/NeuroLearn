@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage.jsx";
 import MaterialsPage from "./pages/MaterialsPage.jsx";
 import CatalogPage from "./pages/CatalogPage.jsx";
 import MyCoursesPage from "./pages/MyCoursesPage.jsx";
+import CoursePage from "./pages/CoursePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="materials" element={<MaterialsPage />} />
           <Route path="catalog" element={<CatalogPage />} />
           <Route path="my-courses" element={<MyCoursesPage />} />
+          <Route path="course/:id" element={<CoursePage />} />
         </Route>
 
         {/* Публичные страницы */}

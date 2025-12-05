@@ -4,10 +4,13 @@ const LearningContext = createContext(null);
 
 const PROFILE_KEY = "neurolearn_profile";
 const ENROLL_KEY = "neurolearn_enrollments";
+const PROGRESS_KEY = "neurolearn_progress";
 
 export function LearningProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [enrolledCourseIds, setEnrolledCourseIds] = useState([]);
+  // progress: { [courseId]: number[] } — список индексов завершённых уроков
+  const [progress, setProgress] = useState({});
 
   // Загрузка из localStorage
   useEffect(() => {
@@ -19,6 +22,10 @@ export function LearningProvider({ children }) {
       const storedEnroll = localStorage.getItem(ENROLL_KEY);
       if (storedEnroll) {
         setEnrolledCourseIds(JSON.parse(storedEnroll));
+      }
+      const storedProgress = localStorage.getItem(PROGRESS_KEY);
+      if (storedProgress) {
+        setProgress(JSON.parse(storedProgress));
       }
     } catch (e) {
       console.error("Failed to load learning state", e);
@@ -47,6 +54,15 @@ export function LearningProvider({ children }) {
     }
   }, [enrolledCourseIds]);
 
+  // Сохранение прогресса
+  useEffect(() => {
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+    } catch (e) {
+      console.error("Failed to save progress", e);
+    }
+  }, [progress]);
+
   const updateProfile = (newProfile) => {
     setProfile(newProfile);
   };
@@ -59,9 +75,39 @@ export function LearningProvider({ children }) {
 
   const unenrollCourse = (courseId) => {
     setEnrolledCourseIds((prev) => prev.filter((id) => id !== courseId));
+    setProgress((prev) => {
+      const copy = { ...prev };
+      delete copy[courseId];
+      return copy;
+    });
   };
 
   const isEnrolled = (courseId) => enrolledCourseIds.includes(courseId);
+
+  // Прогресс: переключение состояния урока
+  const toggleLessonCompletion = (courseId, lessonIndex) => {
+    setProgress((prev) => {
+      const current = prev[courseId] || [];
+      const exists = current.includes(lessonIndex);
+      const updated = exists
+        ? current.filter((i) => i !== lessonIndex)
+        : [...current, lessonIndex];
+      return { ...prev, [courseId]: updated };
+    });
+  };
+
+  // Возвращает { completedCount, totalCount, percent }
+  const getCourseProgress = (courseId, totalLessons) => {
+    if (!totalLessons || totalLessons <= 0) {
+      return { completedCount: 0, totalCount: 0, percent: 0 };
+    }
+    const current = progress[courseId] || [];
+    const completedCount = current.length;
+    const percent = Math.round(
+      Math.min(100, (completedCount / totalLessons) * 100)
+    );
+    return { completedCount, totalCount: totalLessons, percent };
+  };
 
   // Простое "совпадение с профилем" в процентах
   const scoreCourseForProfile = (course) => {
@@ -69,17 +115,14 @@ export function LearningProvider({ children }) {
 
     let score = 0;
 
-    // Совпадение уровня
     if (course.level && profile.level && course.level === profile.level) {
       score += 40;
     }
 
-    // Предпочитаемый формат
     if (profile.format === "video" && course.type === "course") score += 30;
     if (profile.format === "text" && course.type === "article") score += 30;
     if (profile.format === "mixed") score += 15;
 
-    // Совпадение по ключевым словам из цели и тегам
     if (profile.goal && course.tags && course.tags.length > 0) {
       const goalText = profile.goal.toLowerCase();
       const matchedTags = course.tags.filter((tag) =>
@@ -102,6 +145,9 @@ export function LearningProvider({ children }) {
         unenrollCourse,
         isEnrolled,
         scoreCourseForProfile,
+        progress,
+        toggleLessonCompletion,
+        getCourseProgress,
       }}
     >
       {children}
