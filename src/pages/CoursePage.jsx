@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { mockRecommendations } from "../api/recommendations.js";
 import { useLearning } from "../context/LearningContext.jsx";
@@ -15,12 +15,27 @@ function CoursePage() {
     getCourseProgress,
     toggleLessonCompletion,
     scoreCourseForProfile,
+    progress,
+    getRating,
+    setRating,
   } = useLearning();
 
   const course = useMemo(
     () => mockRecommendations.find((item) => item.id === courseId),
     [courseId]
   );
+
+  const existingRating = getRating(courseId);
+  const [score, setScore] = useState(existingRating?.score || 0);
+  const [comment, setComment] = useState(existingRating?.comment || "");
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (existingRating) {
+      setScore(existingRating.score);
+      setComment(existingRating.comment || "");
+    }
+  }, [existingRating]);
 
   if (!course) {
     return (
@@ -56,6 +71,16 @@ function CoursePage() {
     }
   };
 
+  const handleRatingSubmit = (e) => {
+    e.preventDefault();
+    if (!score) return;
+    setRating(course.id, score, comment);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const stars = [1, 2, 3, 4, 5];
+
   return (
     <div className="container py-6 sm:py-10 flex flex-col gap-6">
       <section className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 sm:p-6 flex flex-col gap-4">
@@ -86,6 +111,11 @@ function CoursePage() {
                   Совпадение с профилем: {matchScore}%
                 </span>
               )}
+              {existingRating && (
+                <span className="bg-amber-50 text-amber-700 px-2 py-1 rounded-full">
+                  Ваша оценка: {existingRating.score} / 5
+                </span>
+              )}
             </div>
           </div>
 
@@ -103,7 +133,7 @@ function CoursePage() {
               </button>
               {enrolled && hasLessons && (
                 <p className="text-[11px] text-slate-500">
-                  Прогресс сохраняется локально в браузере.
+                  Прогресс и оценка сохраняются локально в браузере.
                 </p>
               )}
             </div>
@@ -181,6 +211,76 @@ function CoursePage() {
               );
             })}
           </ul>
+        </section>
+      )}
+
+      {/* Блок оценки и отзыва */}
+      {course.type === "course" && (
+        <section className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 sm:p-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold text-slate-900">
+              Оценка курса
+            </h2>
+            {saved && (
+              <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">
+                Отзыв сохранён
+              </span>
+            )}
+          </div>
+          <form
+            className="flex flex-col gap-3 max-w-xl"
+            onSubmit={handleRatingSubmit}
+          >
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-slate-600">
+                Поставьте оценку (1–5):
+              </span>
+              <div className="flex gap-1">
+                {stars.map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setScore(value)}
+                    className={`w-8 h-8 flex items-center justify-center rounded-full border text-sm ${
+                      value <= score
+                        ? "bg-amber-400 border-amber-400 text-white"
+                        : "bg-white border-slate-200 text-slate-500"
+                    }`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-slate-600">
+                Краткий комментарий (по желанию)
+              </label>
+              <textarea
+                rows={3}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                placeholder="Например: полезный курс, понравился разбор рекомендательных алгоритмов."
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition disabled:opacity-60"
+              disabled={!score}
+            >
+              Сохранить оценку
+            </button>
+          </form>
+
+          {existingRating && existingRating.comment && (
+            <div className="mt-2 text-xs text-slate-600 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
+              <span className="font-semibold">Ваш текущий отзыв:</span>{" "}
+              {existingRating.comment}
+            </div>
+          )}
         </section>
       )}
 

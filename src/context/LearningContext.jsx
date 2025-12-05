@@ -5,12 +5,15 @@ const LearningContext = createContext(null);
 const PROFILE_KEY = "neurolearn_profile";
 const ENROLL_KEY = "neurolearn_enrollments";
 const PROGRESS_KEY = "neurolearn_progress";
+const RATINGS_KEY = "neurolearn_ratings";
 
 export function LearningProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [enrolledCourseIds, setEnrolledCourseIds] = useState([]);
-  // progress: { [courseId]: number[] } — список индексов завершённых уроков
+  // progress: { [courseId]: number[] } — индексы завершённых уроков
   const [progress, setProgress] = useState({});
+  // ratings: { [courseId]: { score: number, comment: string } }
+  const [ratings, setRatings] = useState({});
 
   // Загрузка из localStorage
   useEffect(() => {
@@ -26,6 +29,10 @@ export function LearningProvider({ children }) {
       const storedProgress = localStorage.getItem(PROGRESS_KEY);
       if (storedProgress) {
         setProgress(JSON.parse(storedProgress));
+      }
+      const storedRatings = localStorage.getItem(RATINGS_KEY);
+      if (storedRatings) {
+        setRatings(JSON.parse(storedRatings));
       }
     } catch (e) {
       console.error("Failed to load learning state", e);
@@ -62,6 +69,15 @@ export function LearningProvider({ children }) {
       console.error("Failed to save progress", e);
     }
   }, [progress]);
+
+  // Сохранение рейтингов
+  useEffect(() => {
+    try {
+      localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings));
+    } catch (e) {
+      console.error("Failed to save ratings", e);
+    }
+  }, [ratings]);
 
   const updateProfile = (newProfile) => {
     setProfile(newProfile);
@@ -135,6 +151,16 @@ export function LearningProvider({ children }) {
     return score;
   };
 
+  // Рейтинг и отзыв по курсу
+  const setRating = (courseId, score, comment) => {
+    setRatings((prev) => ({
+      ...prev,
+      [courseId]: { score, comment: comment || "" },
+    }));
+  };
+
+  const getRating = (courseId) => ratings[courseId] || null;
+
   return (
     <LearningContext.Provider
       value={{
@@ -148,6 +174,9 @@ export function LearningProvider({ children }) {
         progress,
         toggleLessonCompletion,
         getCourseProgress,
+        ratings,
+        setRating,
+        getRating,
       }}
     >
       {children}

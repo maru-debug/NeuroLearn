@@ -12,10 +12,12 @@ function RecommendationCard({
     enrollCourse,
     unenrollCourse,
     scoreCourseForProfile,
+    getRating,
   } = useLearning();
 
   const enrolled = isEnrolled(item.id);
   const matchScore = showMatch ? scoreCourseForProfile(item) : null;
+  const rating = getRating(item.id);
 
   const handleEnrollClick = (e) => {
     e.stopPropagation();
@@ -56,6 +58,11 @@ function RecommendationCard({
               Совпадение с профилем: {matchScore}%
             </span>
           )}
+          {rating && (
+            <span className="text-[11px] text-amber-700 bg-amber-50 px-2 py-1 rounded-full">
+              Оценка: {rating.score} / 5
+            </span>
+          )}
         </div>
       </div>
 
@@ -79,7 +86,7 @@ function RecommendationCard({
               #{tag}
             </span>
           ))}
-      </div>
+        </div>
       )}
 
       {showEnrollButton && item.type === "course" && (
