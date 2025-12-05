@@ -1,0 +1,42 @@
+export const mockRecommendations = [
+  {
+    id: 1,
+    title: "Введение в машинное обучение",
+    type: "course",
+    level: "beginner",
+    duration: "4 недели",
+    tags: ["ML", "Python", "основы"],
+  },
+  {
+    id: 2,
+    title: "Рекомендательные системы: базовые подходы",
+    type: "course",
+    level: "intermediate",
+    duration: "6 недель",
+    tags: ["recommendation", "ALS", "коллаборативная фильтрация"],
+  },
+  {
+    id: 3,
+    title: "Статья: Обзор современных рекомендательных алгоритмов",
+    type: "article",
+    level: "advanced",
+    duration: "30 мин",
+    tags: ["обзор", "нейросети", "рейтинг"],
+  },
+  {
+    id: 4,
+    title: "Курс по анализу данных для образования",
+    type: "course",
+    level: "intermediate",
+    duration: "5 недель",
+    tags: ["education", "EDA", "dashboards"],
+  },
+  {
+    id: 5,
+    title: "Статья: Персонализация обучения на основе профиля студента",
+    type: "article",
+    level: "beginner",
+    duration: "20 мин",
+    tags: ["персонализация", "профиль", "pedagogy"],
+  },
+];
