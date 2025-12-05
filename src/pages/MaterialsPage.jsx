@@ -80,7 +80,13 @@ function MaterialsPage() {
           </div>
         )}
 
-        {!loading && !error && <RecommendationList items={materials} />}
+        {!loading && !error && (
+          <RecommendationList
+            items={materials}
+            showMatch={false}
+            showEnrollButton={false}
+          />
+        )}
       </section>
 
       <section className="flex flex-col gap-3">
@@ -92,7 +98,11 @@ function MaterialsPage() {
           его активности и истории обучения. В данном демо используются
           статические тестовые данные.
         </p>
-        <RecommendationList items={mockRecommendations.slice(2)} />
+        <RecommendationList
+          items={mockRecommendations.slice(2)}
+          showMatch={true}
+          showEnrollButton={true}
+        />
       </section>
     </div>
   );

@@ -38,7 +38,8 @@ function CatalogPage() {
           <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
             Демонстрационный каталог учебных рекомендаций (курсы и статьи),
             сформированный интеллектуальной системой. Используйте фильтры, чтобы
-            отобрать материалы под ваши задачи и уровень.
+            отобрать материалы под ваши задачи и уровень, а затем записаться на
+            интересующие курсы.
           </p>
         </section>
 
@@ -56,7 +57,11 @@ function CatalogPage() {
                 Найдено: {filtered.length}
               </span>
             </div>
-            <RecommendationList items={filtered} />
+            <RecommendationList
+              items={filtered}
+              showMatch={true}
+              showEnrollButton={true}
+            />
           </div>
         </section>
       </div>
